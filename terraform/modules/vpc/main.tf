@@ -112,3 +112,16 @@ resource "aws_flow_log" "main" {
   log_destination = aws_cloudwatch_log_group.flow_log.arn
   tags            = merge(var.common_tags, { Name = "${var.project_name}-flow-logs" })
 }
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.us-east-1.dynamodb"
+
+  route_table_ids = [
+    aws_route_table.private[0].id,
+    aws_route_table.private[1].id
+  ]
+
+  tags = merge(var.common_tags, {
+    Name = "${var.project_name}-dynamodb-endpoint"
+  })
+}

@@ -39,3 +39,11 @@ module "vpc" {
   availability_zones = var.availability_zones
   common_tags        = local.common_tags
 }
+module "kms" {
+  source         = "../../modules/kms"
+  environment    = "dev"
+  project        = var.project_name
+  aws_account_id = var.aws_account_id
+  aws_region     = var.aws_region
+  tags           = local.common_tags
+}

@@ -14,3 +14,8 @@ variable "availability_zones" {
   type    = list(string)
   default = ["us-east-1a", "us-east-1b"]
 }
+variable "aws_account_id" {
+  description = "AWS Account ID"
+  type        = string
+  default     = "975050048256"
+}
