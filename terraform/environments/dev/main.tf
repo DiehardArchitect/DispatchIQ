@@ -69,3 +69,10 @@ module "security_groups" {
   vpc_cidr    = var.vpc_cidr
   tags        = local.common_tags
 }
+module "secrets_manager" {
+  source      = "../../modules/secrets-manager"
+  environment = "dev"
+  project     = var.project_name
+  kms_key_arn = module.kms.secrets_key_arn
+  tags        = local.common_tags
+}
