@@ -76,3 +76,12 @@ module "secrets_manager" {
   kms_key_arn = module.kms.secrets_key_arn
   tags        = local.common_tags
 }
+module "cloudtrail" {
+  source         = "../../modules/cloudtrail"
+  environment    = "dev"
+  project        = var.project_name
+  aws_account_id = var.aws_account_id
+  aws_region     = var.aws_region
+  kms_key_arn    = module.kms.s3_key_arn
+  tags           = local.common_tags
+}
