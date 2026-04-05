@@ -85,3 +85,26 @@ module "cloudtrail" {
   kms_key_arn    = module.kms.s3_key_arn
   tags           = local.common_tags
 }
+module "ecr" {
+  source      = "../../modules/ecr"
+  environment = "dev"
+  project     = var.project_name
+  kms_key_arn = module.kms.s3_key_arn
+  tags        = local.common_tags
+}
+module "ecs" {
+  source             = "../../modules/ecs"
+  environment        = "dev"
+  project            = var.project_name
+  aws_account_id     = var.aws_account_id
+  aws_region         = var.aws_region
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+  public_subnet_ids  = module.vpc.public_subnet_ids
+  alb_sg_id          = module.security_groups.alb_sg_id
+  app_sg_id          = module.security_groups.app_sg_id
+  ecr_repository_url = module.ecr.repository_url
+  kms_key_arn        = module.kms.s3_key_arn
+  secrets_arn        = module.secrets_manager.db_credentials_arn
+  tags               = local.common_tags
+}
