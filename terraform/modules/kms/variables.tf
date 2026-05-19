@@ -21,7 +21,7 @@ variable "aws_region" {
 variable "deletion_window_in_days" {
   description = "Days before KMS key is deleted after destruction. Min 7, max 30."
   type        = number
-  default     = 7  # Dev: 7 days. Production should be 30.
+  default     = 7 # Dev: 7 days. Production should be 30.
 }
 
 variable "tags" {

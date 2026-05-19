@@ -79,9 +79,9 @@ resource "aws_cloudtrail" "main" {
   name                          = "${var.project}-${var.environment}-trail"
   s3_bucket_name                = aws_s3_bucket.cloudtrail.id
   kms_key_id                    = var.kms_key_arn
-  include_global_service_events = true  # Captures IAM, STS, Route53
-  is_multi_region_trail         = true  # Captures events in ALL regions
-  enable_log_file_validation    = true  # Detects log tampering via hash chain
+  include_global_service_events = true # Captures IAM, STS, Route53
+  is_multi_region_trail         = true # Captures events in ALL regions
+  enable_log_file_validation    = true # Detects log tampering via hash chain
 
   tags = merge(var.tags, {
     Name    = "${var.project}-${var.environment}-trail"
