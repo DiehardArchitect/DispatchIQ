@@ -11,3 +11,13 @@
 .env
 .env*
 !.env.example
+
+# Terraform — added after Phase 3.5 latent-bug remediation session
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
