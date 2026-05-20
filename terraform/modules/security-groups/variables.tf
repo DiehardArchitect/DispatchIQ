@@ -23,3 +23,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "use_vpc_endpoints" {
+  type        = bool
+  description = "When true, app egress is scoped to VPC CIDR (assumes Interface Endpoints exist for AWS service access). When false, egress opens to 0.0.0.0/0 for NAT-based AWS API access. Defaults to false for dev cost savings."
+  default     = false
+}

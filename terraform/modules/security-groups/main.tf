@@ -97,7 +97,7 @@ resource "aws_security_group_rule" "app_egress_https" {
   from_port         = 443
   to_port           = 443
   protocol          = "tcp"
-  cidr_blocks       = [var.vpc_cidr]
+  cidr_blocks       = var.use_vpc_endpoints ? [var.vpc_cidr] : ["0.0.0.0/0"]
   security_group_id = aws_security_group.app.id
 }
 
@@ -107,7 +107,7 @@ resource "aws_security_group_rule" "app_egress_dns" {
   from_port         = 53
   to_port           = 53
   protocol          = "udp"
-  cidr_blocks       = [var.vpc_cidr]
+  cidr_blocks       = var.use_vpc_endpoints ? [var.vpc_cidr] : ["0.0.0.0/0"]
   security_group_id = aws_security_group.app.id
 }
 

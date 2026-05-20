@@ -19,3 +19,9 @@ variable "aws_account_id" {
   type        = string
   default     = "975050048256"
 }
+
+variable "use_vpc_endpoints" {
+  type        = bool
+  description = "Toggle for VPC Interface Endpoints + scoped SG egress. False (default) = cheap NAT-based path for dev. True = production-grade private connectivity."
+  default     = false
+}

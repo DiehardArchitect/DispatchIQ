@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
+    }
   }
   backend "s3" {
     bucket         = "terraform-state-975050048256-us-east-1"
@@ -62,12 +66,13 @@ module "iam" {
   tags = local.common_tags
 }
 module "security_groups" {
-  source      = "../../modules/security-groups"
-  environment = "dev"
-  project     = var.project_name
-  vpc_id      = module.vpc.vpc_id
-  vpc_cidr    = var.vpc_cidr
-  tags        = local.common_tags
+  source            = "../../modules/security-groups"
+  environment       = "dev"
+  project           = var.project_name
+  vpc_id            = module.vpc.vpc_id
+  vpc_cidr          = var.vpc_cidr
+  use_vpc_endpoints = var.use_vpc_endpoints
+  tags              = local.common_tags
 }
 module "secrets_manager" {
   source      = "../../modules/secrets-manager"
@@ -104,7 +109,19 @@ module "ecs" {
   alb_sg_id          = module.security_groups.alb_sg_id
   app_sg_id          = module.security_groups.app_sg_id
   ecr_repository_url = module.ecr.repository_url
-  kms_key_arn        = module.kms.s3_key_arn
+  kms_key_arn        = module.kms.secrets_key_arn
   secrets_arn        = module.secrets_manager.db_credentials_arn
   tags               = local.common_tags
+}
+
+module "vpc_endpoints" {
+  source                  = "../../modules/vpc-endpoints"
+  enabled                 = var.use_vpc_endpoints
+  project_name            = var.project_name
+  environment             = "dev"
+  region                  = var.aws_region
+  vpc_id                  = module.vpc.vpc_id
+  private_subnet_ids      = module.vpc.private_subnet_ids
+  private_route_table_ids = module.vpc.private_route_table_ids
+  app_security_group_id   = module.security_groups.app_sg_id
 }
