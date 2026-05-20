@@ -1,4 +1,4 @@
-# AWS Cloud Platform
+# DispatchIQ
 
 > Production-grade cloud infrastructure built with Terraform.
 > Actively developed — additional phases in progress.
