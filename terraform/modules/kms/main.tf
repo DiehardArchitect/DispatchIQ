@@ -40,6 +40,57 @@ locals {
       }
     ]
   })
+
+  # Dedicated policy for the Secrets Manager KMS key: base statements +
+  # explicit grant for the ECS execution role to call kms:Decrypt via Secrets
+  # Manager. Required because KMS key policies are authoritative — IAM alone
+  # cannot grant decrypt access without the key's resource policy agreeing.
+  secrets_key_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "EnableRootAccess"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:root"
+        }
+        Action   = "kms:*"
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowCloudWatchLogs"
+        Effect = "Allow"
+        Principal = {
+          Service = "logs.${var.aws_region}.amazonaws.com"
+        }
+        Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
+          "kms:GenerateDataKey*",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowECSExecutionRoleViaSecretsManager"
+        Effect = "Allow"
+        Principal = {
+          AWS = "arn:aws:iam::${var.aws_account_id}:role/${var.project}-${var.environment}-ecs-execution-role"
+        }
+        Action = [
+          "kms:Decrypt",
+          "kms:DescribeKey"
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "kms:ViaService" = "secretsmanager.${var.aws_region}.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
 }
 
 # EBS KEY
@@ -101,7 +152,7 @@ resource "aws_kms_key" "secrets" {
   description             = "${var.project}-${var.environment} Secrets Manager encryption key"
   deletion_window_in_days = var.deletion_window_in_days
   enable_key_rotation     = true
-  policy                  = local.key_policy
+  policy                  = local.secrets_key_policy
 
   tags = merge(var.tags, {
     Name    = "${var.project}-${var.environment}-secrets-key"
