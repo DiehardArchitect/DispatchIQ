@@ -26,3 +26,8 @@ output "flow_log_group_name" {
   description = "CloudWatch Log Group name for VPC Flow Logs."
   value       = aws_cloudwatch_log_group.flow_log.name
 }
+
+output "private_route_table_ids" {
+  description = "IDs of private route tables (one per AZ)."
+  value       = aws_route_table.private[*].id
+}
