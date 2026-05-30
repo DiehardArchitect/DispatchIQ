@@ -125,3 +125,22 @@ module "vpc_endpoints" {
   private_route_table_ids = module.vpc.private_route_table_ids
   app_security_group_id   = module.security_groups.app_sg_id
 }
+
+module "rds" {
+  source = "../../modules/rds"
+  count  = var.deploy_rds ? 1 : 0
+
+  project            = var.project_name
+  environment        = "dev"
+  private_subnet_ids = module.vpc.private_subnet_ids
+  security_group_id  = module.security_groups.rds_sg_id
+  kms_key_arn        = module.kms.rds_key_arn
+
+  instance_class      = "db.t4g.micro"
+  allocated_storage   = 20
+  multi_az            = false
+  skip_final_snapshot = true
+  deletion_protection = false
+
+  tags = local.common_tags
+}

@@ -25,3 +25,9 @@ variable "use_vpc_endpoints" {
   description = "Toggle for VPC Interface Endpoints + scoped SG egress. False (default) = cheap NAT-based path for dev. True = production-grade private connectivity."
   default     = false
 }
+
+variable "deploy_rds" {
+  type        = bool
+  description = "Toggle for Phase 4 RDS deployment. False (default) = no DB resources created (zero cost). True = provision Postgres 16 in private subnets. Lets us cleanly add/remove the data layer between sessions."
+  default     = false
+}
